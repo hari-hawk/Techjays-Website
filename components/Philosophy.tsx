@@ -7,7 +7,7 @@ import { ScrollTrigger } from '@/lib/gsap'
 
 export default function Philosophy() {
   const sectionRef = useRef<HTMLElement>(null)
-  const quoteRef = useRef<HTMLBlockquoteElement>(null)
+  const quoteRef = useRef<HTMLQuoteElement>(null)
   const authorRef = useRef<HTMLDivElement>(null)
 
   useScrollTrigger(() => {
