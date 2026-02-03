@@ -1,0 +1,2748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Techjays - AI Systems for Operations. Built by former Google engineers. Real systems deployed in weeks, not quarters.">
+    <title>Techjays - AI Systems for Operations</title>
+
+    <!-- Preload Critical Assets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- GSAP & Plugins -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/lenis@1.1.1/dist/lenis.min.js"></script>
+
+    <!-- Lottie -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+        /* =====================================================
+           DESIGN SYSTEM - Premium Variables
+           ===================================================== */
+        :root {
+            /* Core Colors - Dark Mode */
+            --color-bg: #050505;
+            --color-bg-elevated: #0a0a0b;
+            --color-bg-card: #111113;
+            --color-bg-glass: rgba(17, 17, 19, 0.7);
+
+            /* Text Colors */
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #a1a1aa;
+            --color-text-muted: #52525b;
+
+            /* Accent Colors */
+            --color-accent-1: #6366f1;
+            --color-accent-2: #8b5cf6;
+            --color-accent-3: #ec4899;
+            --color-accent-4: #06b6d4;
+
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            --gradient-glow: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+
+            /* Glass */
+            --glass-blur: 24px;
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-border-hover: rgba(255, 255, 255, 0.12);
+
+            /* Typography */
+            --font-display: 'Space Grotesk', system-ui, sans-serif;
+            --font-body: 'Inter', system-ui, sans-serif;
+
+            /* Fluid Sizing */
+            --text-mega: clamp(4rem, 12vw, 10rem);
+            --text-hero: clamp(3rem, 8vw, 6rem);
+            --text-display: clamp(2rem, 5vw, 4rem);
+            --text-heading: clamp(1.5rem, 3vw, 2.5rem);
+            --text-subheading: clamp(1.125rem, 2vw, 1.5rem);
+
+            /* Spacing */
+            --section-padding: clamp(80px, 12vh, 160px);
+            --container-max: 1440px;
+
+            /* Easing */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* Light Mode */
+        [data-theme="light"] {
+            --color-bg: #fafafa;
+            --color-bg-elevated: #ffffff;
+            --color-bg-card: #f4f4f5;
+            --color-bg-glass: rgba(255, 255, 255, 0.8);
+            --color-text-primary: #09090b;
+            --color-text-secondary: #52525b;
+            --color-text-muted: #a1a1aa;
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-border-hover: rgba(0, 0, 0, 0.15);
+        }
+
+        /* =====================================================
+           RESET & BASE
+           ===================================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html.lenis, html.lenis body {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--color-bg);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.6s ease, color 0.6s ease;
+        }
+
+        ::selection {
+            background: var(--color-accent-2);
+            color: white;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-bg); }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--color-accent-1), var(--color-accent-2));
+            border-radius: 4px;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-accent-1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 9999;
+            transition: top 0.3s ease;
+        }
+
+        .skip-link:focus {
+            top: 20px;
+        }
+
+        /* =====================================================
+           CUSTOM CURSOR
+           ===================================================== */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-accent-2);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--color-accent-2);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .cursor.hover {
+            transform: scale(2.5);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        @media (hover: none) {
+            .cursor, .cursor-dot { display: none; }
+        }
+
+        /* =====================================================
+           ANIMATED BACKGROUND
+           ===================================================== */
+        .bg-wrapper {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.5;
+            will-change: transform;
+        }
+
+        .gradient-orb-1 {
+            width: 60vw;
+            height: 60vw;
+            max-width: 800px;
+            max-height: 800px;
+            top: -20%;
+            left: -15%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
+        }
+
+        .gradient-orb-2 {
+            width: 50vw;
+            height: 50vw;
+            max-width: 700px;
+            max-height: 700px;
+            top: 40%;
+            right: -20%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, transparent 70%);
+        }
+
+        .gradient-orb-3 {
+            width: 45vw;
+            height: 45vw;
+            max-width: 600px;
+            max-height: 600px;
+            bottom: -10%;
+            left: 30%;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%);
+        }
+
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100px 100px;
+            mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, black 30%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, black 30%, transparent 70%);
+        }
+
+        /* =====================================================
+           NAVIGATION
+           ===================================================== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 24px 0;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+
+        .nav.scrolled {
+            padding: 12px 0;
+        }
+
+        .nav-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+        }
+
+        .nav-glass {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 28px;
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+
+        .nav.scrolled .nav-glass {
+            background: rgba(10, 10, 11, 0.95);
+            border-color: var(--glass-border-hover);
+        }
+
+        [data-theme="light"] .nav.scrolled .nav-glass {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-mark {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-mark::before {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: var(--color-bg);
+            border-radius: 7px;
+        }
+
+        .logo-mark::after {
+            content: 'T';
+            position: relative;
+            font-size: 1rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            padding: 12px 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            position: relative;
+            transition: all 0.3s var(--ease-out-expo);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            border-radius: 1px;
+            transition: all 0.3s var(--ease-out-expo);
+            transform: translateX(-50%);
+        }
+
+        .nav-menu a:hover {
+            color: var(--color-text-primary);
+        }
+
+        .nav-menu a:hover::after {
+            width: calc(100% - 40px);
+        }
+
+        .nav-menu a.active {
+            color: var(--color-text-primary);
+        }
+
+        .nav-menu a.active::after {
+            width: calc(100% - 40px);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            background: var(--glass-border);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle:hover {
+            background: var(--glass-border-hover);
+            transform: scale(1.05);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle .sun-icon {
+            position: absolute;
+            opacity: 0;
+            transform: rotate(90deg) scale(0);
+        }
+
+        .theme-toggle .moon-icon {
+            opacity: 1;
+            transform: rotate(0) scale(1);
+        }
+
+        [data-theme="light"] .theme-toggle .sun-icon {
+            opacity: 1;
+            transform: rotate(0) scale(1);
+        }
+
+        [data-theme="light"] .theme-toggle .moon-icon {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0);
+        }
+
+        /* =====================================================
+           BUTTONS
+           ===================================================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 28px;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s var(--ease-out-expo);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--color-text-primary);
+            color: var(--color-bg);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 50px -15px rgba(99, 102, 241, 0.5);
+            color: white;
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--color-text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--glass-border);
+            border-color: var(--glass-border-hover);
+        }
+
+        .btn-large {
+            padding: 18px 40px;
+            font-size: 1rem;
+            border-radius: 16px;
+        }
+
+        .btn-icon {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.3s var(--ease-out-expo);
+        }
+
+        .btn:hover .btn-icon {
+            transform: translateX(4px);
+        }
+
+        /* =====================================================
+           HERO SECTION
+           ===================================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 160px 0 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+            width: 100%;
+        }
+
+        /* Floating Elements */
+        .hero-shapes {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .hero-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        .hero-shape-1 {
+            width: 500px;
+            height: 500px;
+            top: 5%;
+            left: 5%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), transparent);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .hero-shape-2 {
+            width: 350px;
+            height: 350px;
+            bottom: 10%;
+            right: 10%;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), transparent);
+            border: 1px solid rgba(139, 92, 246, 0.08);
+        }
+
+        .hero-shape-3 {
+            width: 200px;
+            height: 200px;
+            top: 30%;
+            right: 25%;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), transparent);
+            border: 1px solid rgba(236, 72, 153, 0.06);
+        }
+
+        /* Animated Lines */
+        .hero-lines {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .hero-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.4), transparent);
+            opacity: 0;
+        }
+
+        .hero-line-1 { top: 15%; width: 100%; }
+        .hero-line-2 { top: 35%; width: 100%; }
+        .hero-line-3 { top: 55%; width: 100%; }
+        .hero-line-4 { top: 75%; width: 100%; }
+        .hero-line-5 { top: 95%; width: 100%; }
+
+        .hero-content {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Badge */
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px 10px 14px;
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .badge-dot {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .badge-dot::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 50%;
+            animation: pulse-ring 2s ease-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+
+        .badge-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+
+        /* Hero Title with Split Text */
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: var(--text-mega);
+            font-weight: 800;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            margin-bottom: 32px;
+        }
+
+        .hero-title .word {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: top;
+        }
+
+        .hero-title .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+        }
+
+        .hero-title .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: var(--text-subheading);
+            color: var(--color-text-secondary);
+            max-width: 600px;
+            margin: 0 auto 48px;
+            line-height: 1.7;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        /* Hero Stats */
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 80px;
+            padding-top: 60px;
+            border-top: 1px solid var(--glass-border);
+            opacity: 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            margin-top: 8px;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+        }
+
+        .scroll-text {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--color-accent-1), transparent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: var(--color-text-primary);
+            animation: scroll-down 1.5s ease-in-out infinite;
+        }
+
+        @keyframes scroll-down {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(400%); }
+        }
+
+        /* =====================================================
+           MARQUEE SECTION
+           ===================================================== */
+        .marquee-section {
+            padding: 60px 0;
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            overflow: hidden;
+        }
+
+        .marquee-label {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 40px;
+        }
+
+        .marquee-track {
+            display: flex;
+            width: fit-content;
+            animation: marquee 40s linear infinite;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .marquee-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 60px;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            white-space: nowrap;
+            transition: color 0.3s ease;
+        }
+
+        .marquee-item:hover {
+            color: var(--color-text-primary);
+        }
+
+        .marquee-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+        }
+
+        /* =====================================================
+           PROCESS SECTION - Grid Layout (No Horizontal Scroll)
+           ===================================================== */
+        .process-section {
+            position: relative;
+            padding: var(--section-padding) 0;
+        }
+
+        .process-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+            width: 100%;
+        }
+
+        .process-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--color-accent-1);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: var(--text-display);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        /* Process Grid Layout */
+        .process-track {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .process-track {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .process-track {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .process-card {
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 48px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s var(--ease-out-expo);
+        }
+
+        .process-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s var(--ease-out-expo);
+        }
+
+        .process-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--glass-border-hover);
+            box-shadow: 0 40px 80px -20px rgba(99, 102, 241, 0.2);
+        }
+
+        .process-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .process-number {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--color-accent-1);
+            margin-bottom: 28px;
+        }
+
+        .process-card-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .process-duration {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-accent-4);
+            margin-bottom: 20px;
+        }
+
+        .process-description {
+            font-size: 0.9375rem;
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        .process-deliverables {
+            list-style: none;
+            padding-top: 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .process-deliverables li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .process-deliverables li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+        }
+
+        /* =====================================================
+           WORK/CASE STUDIES
+           ===================================================== */
+        .work-section {
+            padding: var(--section-padding) 0;
+            position: relative;
+        }
+
+        .work-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+        }
+
+        .work-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 60px;
+        }
+
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        .work-card {
+            position: relative;
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 48px;
+            overflow: hidden;
+            transition: all 0.6s var(--ease-out-expo);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            opacity: 0;
+            transform: translateY(60px);
+        }
+
+        .work-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(99, 102, 241, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .work-card:hover {
+            transform: translateY(-16px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow:
+                0 60px 120px -30px rgba(0, 0, 0, 0.5),
+                0 0 60px -20px rgba(99, 102, 241, 0.25);
+        }
+
+        .work-card:hover::before {
+            opacity: 1;
+        }
+
+        .work-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+        }
+
+        .work-industry {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .work-arrow {
+            width: 52px;
+            height: 52px;
+            background: var(--glass-border);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+
+        .work-arrow svg {
+            width: 22px;
+            height: 22px;
+            color: var(--color-text-muted);
+            transition: all 0.4s var(--ease-out-expo);
+        }
+
+        .work-card:hover .work-arrow {
+            background: var(--color-text-primary);
+            border-color: transparent;
+        }
+
+        .work-card:hover .work-arrow svg {
+            color: var(--color-bg);
+            transform: rotate(-45deg);
+        }
+
+        .work-title {
+            font-family: var(--font-display);
+            font-size: var(--text-heading);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+
+        .work-description {
+            font-size: 1rem;
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        .work-metrics {
+            display: flex;
+            gap: 40px;
+            padding-top: 28px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-value {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        /* =====================================================
+           CAPABILITIES SECTION
+           ===================================================== */
+        .capabilities-section {
+            padding: var(--section-padding) 0;
+            position: relative;
+        }
+
+        .capabilities-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+        }
+
+        .capabilities-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .capability-card {
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.5s var(--ease-out-expo);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .capability-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--glass-border-hover);
+            box-shadow: 0 30px 60px -20px rgba(99, 102, 241, 0.15);
+        }
+
+        .capability-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.08));
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+
+        .capability-card:hover .capability-icon {
+            transform: scale(1.1) rotate(-5deg);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.15));
+        }
+
+        .capability-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--color-accent-1);
+        }
+
+        .capability-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .capability-description {
+            font-size: 0.9375rem;
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+        }
+
+        /* =====================================================
+           INTERNAL SYSTEMS SECTION
+           ===================================================== */
+        .systems-section {
+            padding: var(--section-padding) 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .systems-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+        }
+
+        .systems-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        .system-card {
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 48px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s var(--ease-out-expo);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .system-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, transparent 60%, rgba(99, 102, 241, 0.05) 100%);
+            pointer-events: none;
+        }
+
+        .system-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--glass-border-hover);
+            box-shadow: 0 40px 80px -25px rgba(99, 102, 241, 0.2);
+        }
+
+        .system-icon {
+            width: 72px;
+            height: 72px;
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .system-icon::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: var(--color-bg-card);
+            border-radius: 16px;
+        }
+
+        .system-icon svg {
+            position: relative;
+            width: 32px;
+            height: 32px;
+            color: var(--color-accent-1);
+        }
+
+        .system-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .system-description {
+            font-size: 1rem;
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        .system-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-accent-1);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .system-link:hover {
+            gap: 12px;
+        }
+
+        .system-link svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .system-link:hover svg {
+            transform: translateX(4px);
+        }
+
+        /* =====================================================
+           TESTIMONIALS
+           ===================================================== */
+        .testimonials-section {
+            padding: var(--section-padding) 0;
+            position: relative;
+        }
+
+        .testimonials-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+        }
+
+        .testimonial-card {
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 64px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .testimonial-quote {
+            font-family: var(--font-display);
+            font-size: var(--text-heading);
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 40px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .author-avatar {
+            width: 56px;
+            height: 56px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .author-info {
+            text-align: left;
+        }
+
+        .author-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .author-role {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        /* =====================================================
+           CTA SECTION
+           ===================================================== */
+        .cta-section {
+            padding: var(--section-padding) 0;
+            position: relative;
+        }
+
+        .cta-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+        }
+
+        .cta-card {
+            background: var(--color-bg-glass);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .cta-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: var(--text-display);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .cta-description {
+            font-size: 1.125rem;
+            color: var(--color-text-secondary);
+            max-width: 500px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+            position: relative;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* =====================================================
+           FOOTER
+           ===================================================== */
+        .footer {
+            padding: 80px 0 40px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .footer-tagline {
+            font-size: 0.9375rem;
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 80px;
+        }
+
+        .footer-column h4 {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: var(--color-text-primary);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-copyright {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 16px;
+        }
+
+        .footer-social a {
+            width: 44px;
+            height: 44px;
+            background: var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: var(--color-accent-1);
+            color: white;
+            transform: translateY(-4px);
+        }
+
+        .footer-social svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+        @media (max-width: 1024px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .work-grid,
+            .systems-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .capabilities-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-stats {
+                gap: 40px;
+            }
+
+            .process-track {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .capabilities-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .process-track {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 32px;
+            }
+
+            .footer-top {
+                flex-direction: column;
+                gap: 48px;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 24px;
+                text-align: center;
+            }
+
+            .cta-card {
+                padding: 48px 32px;
+            }
+
+            .work-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 24px;
+            }
+
+            .testimonial-card {
+                padding: 40px 24px;
+            }
+
+            .process-card {
+                padding: 32px;
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .lenis.lenis-smooth {
+                scroll-behavior: smooth !important;
+            }
+        }
+
+        /* Focus Styles */
+        *:focus-visible {
+            outline: 2px solid var(--color-accent-1);
+            outline-offset: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" aria-hidden="true"></div>
+    <div class="cursor-dot" aria-hidden="true"></div>
+
+    <!-- Animated Background -->
+    <div class="bg-wrapper" aria-hidden="true">
+        <div class="gradient-orb gradient-orb-1"></div>
+        <div class="gradient-orb gradient-orb-2"></div>
+        <div class="gradient-orb gradient-orb-3"></div>
+    </div>
+    <div class="noise-overlay" aria-hidden="true"></div>
+    <div class="grid-overlay" aria-hidden="true"></div>
+
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="nav-glass">
+                <a href="#" class="logo" aria-label="Techjays Home">
+                    <div class="logo-mark"></div>
+                    <span>Techjays</span>
+                </a>
+
+                <ul class="nav-menu">
+                    <li><a href="#process" class="active">Process</a></li>
+                    <li><a href="#work">Work</a></li>
+                    <li><a href="#capabilities">Capabilities</a></li>
+                    <li><a href="#systems">Systems</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button class="theme-toggle" aria-label="Toggle theme">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    </button>
+                    <a href="#contact" class="btn btn-primary">
+                        <span>Get Started</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-shapes" aria-hidden="true">
+                <div class="hero-shape hero-shape-1"></div>
+                <div class="hero-shape hero-shape-2"></div>
+                <div class="hero-shape hero-shape-3"></div>
+            </div>
+            <div class="hero-lines" aria-hidden="true">
+                <div class="hero-line hero-line-1"></div>
+                <div class="hero-line hero-line-2"></div>
+                <div class="hero-line hero-line-3"></div>
+                <div class="hero-line hero-line-4"></div>
+                <div class="hero-line hero-line-5"></div>
+            </div>
+
+            <div class="hero-container">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <div class="badge-dot"></div>
+                        <span class="badge-text">Now deploying AI systems in weeks</span>
+                    </div>
+
+                    <h1 class="hero-title">
+                        <span class="word"><span class="char">W</span><span class="char">e</span><span class="char">&nbsp;</span></span>
+                        <span class="word"><span class="char">b</span><span class="char">u</span><span class="char">i</span><span class="char">l</span><span class="char">d</span><span class="char">&nbsp;</span></span>
+                        <span class="word gradient-text"><span class="char">A</span><span class="char">I</span><span class="char">&nbsp;</span></span>
+                        <span class="word gradient-text"><span class="char">s</span><span class="char">y</span><span class="char">s</span><span class="char">t</span><span class="char">e</span><span class="char">m</span><span class="char">s</span></span>
+                        <br>
+                        <span class="word"><span class="char">t</span><span class="char">h</span><span class="char">a</span><span class="char">t</span><span class="char">&nbsp;</span></span>
+                        <span class="word"><span class="char">a</span><span class="char">c</span><span class="char">t</span><span class="char">u</span><span class="char">a</span><span class="char">l</span><span class="char">l</span><span class="char">y</span><span class="char">&nbsp;</span></span>
+                        <span class="word"><span class="char">w</span><span class="char">o</span><span class="char">r</span><span class="char">k</span></span>
+                    </h1>
+
+                    <p class="hero-subtitle">
+                        Real AI infrastructure deployed in weeks, not quarters. Built by former Google engineers who know the difference between a demo and a system.
+                    </p>
+
+                    <div class="hero-cta">
+                        <a href="#contact" class="btn btn-primary btn-large">
+                            <span>Start a Conversation</span>
+                            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </a>
+                        <a href="#work" class="btn btn-ghost btn-large">
+                            <span>View Our Work</span>
+                        </a>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" data-count="47">0</div>
+                            <div class="stat-label">AI Systems Deployed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" data-count="98">0</div>
+                            <div class="stat-label">Client Satisfaction %</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" data-count="12">0</div>
+                            <div class="stat-label">Industry Verticals</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scroll-indicator" aria-hidden="true">
+                <span class="scroll-text">Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+        <!-- Marquee Section -->
+        <section class="marquee-section" aria-label="Partner companies">
+            <div class="marquee-label">Trusted by Industry Leaders</div>
+            <div class="marquee-track">
+                <div class="marquee-item"><span class="marquee-dot"></span>Fortune 500 Enterprises</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Healthcare Systems</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Financial Institutions</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Logistics Giants</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Retail Innovators</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Manufacturing Leaders</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Energy Providers</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Government Agencies</div>
+                <!-- Duplicate for seamless loop -->
+                <div class="marquee-item"><span class="marquee-dot"></span>Fortune 500 Enterprises</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Healthcare Systems</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Financial Institutions</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Logistics Giants</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Retail Innovators</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Manufacturing Leaders</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Energy Providers</div>
+                <div class="marquee-item"><span class="marquee-dot"></span>Government Agencies</div>
+            </div>
+        </section>
+
+        <!-- Process Section -->
+        <section id="process" class="process-section" aria-label="Our methodology">
+            <div class="process-container">
+                <div class="process-header">
+                    <div class="section-label">How We Work</div>
+                    <h2 class="section-title">Our Four-Phase Methodology</h2>
+                </div>
+
+                <div class="process-track">
+                    <article class="process-card">
+                        <div class="process-number">01</div>
+                        <h3 class="process-card-title">Learn</h3>
+                        <div class="process-duration">Week 1-2</div>
+                        <p class="process-description">
+                            Deep dive into your operations, data landscape, and team dynamics. We identify where AI creates real leverage.
+                        </p>
+                        <ul class="process-deliverables">
+                            <li>Operational audit</li>
+                            <li>Data infrastructure review</li>
+                            <li>Opportunity mapping</li>
+                        </ul>
+                    </article>
+
+                    <article class="process-card">
+                        <div class="process-number">02</div>
+                        <h3 class="process-card-title">Proof</h3>
+                        <div class="process-duration">Week 3-4</div>
+                        <p class="process-description">
+                            Build a working prototype with real data. Validate assumptions, measure impact, and refine the approach.
+                        </p>
+                        <ul class="process-deliverables">
+                            <li>Functional prototype</li>
+                            <li>Performance benchmarks</li>
+                            <li>Integration testing</li>
+                        </ul>
+                    </article>
+
+                    <article class="process-card">
+                        <div class="process-number">03</div>
+                        <h3 class="process-card-title">Ship</h3>
+                        <div class="process-duration">Week 5-8</div>
+                        <p class="process-description">
+                            Deploy production-grade systems with monitoring, failovers, and team training. Built for scale from day one.
+                        </p>
+                        <ul class="process-deliverables">
+                            <li>Production deployment</li>
+                            <li>Monitoring dashboards</li>
+                            <li>Team enablement</li>
+                        </ul>
+                    </article>
+
+                    <article class="process-card">
+                        <div class="process-number">04</div>
+                        <h3 class="process-card-title">Evolve</h3>
+                        <div class="process-duration">Ongoing</div>
+                        <p class="process-description">
+                            Continuous optimization based on real-world performance. Systems that get smarter with every iteration.
+                        </p>
+                        <ul class="process-deliverables">
+                            <li>Performance analysis</li>
+                            <li>Model refinement</li>
+                            <li>Feature expansion</li>
+                        </ul>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Work Section -->
+        <section id="work" class="work-section" aria-label="Case studies">
+            <div class="work-container">
+                <div class="work-header">
+                    <div>
+                        <div class="section-label">Selected Work</div>
+                        <h2 class="section-title">Impact Stories</h2>
+                    </div>
+                    <a href="#" class="btn btn-ghost">
+                        <span>View All Projects</span>
+                        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="work-grid">
+                    <a href="#" class="work-card">
+                        <div class="work-card-header">
+                            <span class="work-industry">Healthcare</span>
+                            <div class="work-arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17" />
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="work-title">Patient Flow Prediction System</h3>
+                        <p class="work-description">
+                            ML-powered capacity planning that reduced ER wait times by 34% across a 12-hospital network.
+                        </p>
+                        <div class="work-metrics">
+                            <div class="metric">
+                                <span class="metric-value">34%</span>
+                                <span class="metric-label">Reduced Wait Time</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">$2.4M</span>
+                                <span class="metric-label">Annual Savings</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="#" class="work-card">
+                        <div class="work-card-header">
+                            <span class="work-industry">Logistics</span>
+                            <div class="work-arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17" />
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="work-title">Dynamic Route Optimization</h3>
+                        <p class="work-description">
+                            Real-time routing engine processing 50K+ daily deliveries with 23% fuel cost reduction.
+                        </p>
+                        <div class="work-metrics">
+                            <div class="metric">
+                                <span class="metric-value">23%</span>
+                                <span class="metric-label">Fuel Savings</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">50K+</span>
+                                <span class="metric-label">Daily Deliveries</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="#" class="work-card">
+                        <div class="work-card-header">
+                            <span class="work-industry">Finance</span>
+                            <div class="work-arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17" />
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="work-title">Fraud Detection Pipeline</h3>
+                        <p class="work-description">
+                            Real-time transaction monitoring that catches fraud 47% faster while reducing false positives.
+                        </p>
+                        <div class="work-metrics">
+                            <div class="metric">
+                                <span class="metric-value">47%</span>
+                                <span class="metric-label">Faster Detection</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">62%</span>
+                                <span class="metric-label">Fewer False Positives</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="#" class="work-card">
+                        <div class="work-card-header">
+                            <span class="work-industry">Retail</span>
+                            <div class="work-arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17" />
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="work-title">Inventory Intelligence Platform</h3>
+                        <p class="work-description">
+                            Demand forecasting system that optimized $180M in inventory across 400+ locations.
+                        </p>
+                        <div class="work-metrics">
+                            <div class="metric">
+                                <span class="metric-value">$180M</span>
+                                <span class="metric-label">Inventory Managed</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">18%</span>
+                                <span class="metric-label">Waste Reduction</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Capabilities Section -->
+        <section id="capabilities" class="capabilities-section" aria-label="Our capabilities">
+            <div class="capabilities-container">
+                <div class="capabilities-header">
+                    <div class="section-label">What We Do</div>
+                    <h2 class="section-title">Core Capabilities</h2>
+                </div>
+
+                <div class="capabilities-grid">
+                    <article class="capability-card">
+                        <div class="capability-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="capability-title">Machine Learning Systems</h3>
+                        <p class="capability-description">
+                            Production-grade ML pipelines that scale with your business. From data engineering to model serving.
+                        </p>
+                    </article>
+
+                    <article class="capability-card">
+                        <div class="capability-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="capability-title">LLM Integration</h3>
+                        <p class="capability-description">
+                            Custom language model applications with RAG, fine-tuning, and enterprise-grade security.
+                        </p>
+                    </article>
+
+                    <article class="capability-card">
+                        <div class="capability-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                            </svg>
+                        </div>
+                        <h3 class="capability-title">Predictive Analytics</h3>
+                        <p class="capability-description">
+                            Forecasting systems that turn historical data into actionable business intelligence.
+                        </p>
+                    </article>
+
+                    <article class="capability-card">
+                        <div class="capability-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                            </svg>
+                        </div>
+                        <h3 class="capability-title">Data Engineering</h3>
+                        <p class="capability-description">
+                            Robust data infrastructure that powers AI at scale. ETL, warehousing, and real-time streaming.
+                        </p>
+                    </article>
+
+                    <article class="capability-card">
+                        <div class="capability-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <h3 class="capability-title">AI Security</h3>
+                        <p class="capability-description">
+                            Enterprise-grade security for AI systems. Model protection, data privacy, and compliance.
+                        </p>
+                    </article>
+
+                    <article class="capability-card">
+                        <div class="capability-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <h3 class="capability-title">MLOps & Automation</h3>
+                        <p class="capability-description">
+                            Automated pipelines for model training, testing, and deployment. CI/CD for AI.
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Internal Systems Section -->
+        <section id="systems" class="systems-section" aria-label="Internal tools">
+            <div class="systems-container">
+                <div class="systems-header">
+                    <div class="section-label">Proprietary Tools</div>
+                    <h2 class="section-title">Internal Systems</h2>
+                </div>
+
+                <div class="systems-grid">
+                    <article class="system-card">
+                        <div class="system-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                            </svg>
+                        </div>
+                        <h3 class="system-title">Orion ML Platform</h3>
+                        <p class="system-description">
+                            Our proprietary ML orchestration platform that reduces model deployment time by 70% while ensuring production reliability.
+                        </p>
+                        <a href="#" class="system-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </a>
+                    </article>
+
+                    <article class="system-card">
+                        <div class="system-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                        <h3 class="system-title">DataForge Pipeline</h3>
+                        <p class="system-description">
+                            Automated data quality and transformation engine that processes petabytes with zero-touch maintenance.
+                        </p>
+                        <a href="#" class="system-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </a>
+                    </article>
+
+                    <article class="system-card">
+                        <div class="system-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </div>
+                        <h3 class="system-title">Sentinel Monitor</h3>
+                        <p class="system-description">
+                            Real-time AI observability platform with anomaly detection, drift monitoring, and automated alerting.
+                        </p>
+                        <a href="#" class="system-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </a>
+                    </article>
+
+                    <article class="system-card">
+                        <div class="system-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                            </svg>
+                        </div>
+                        <h3 class="system-title">Atlas Knowledge Base</h3>
+                        <p class="system-description">
+                            Enterprise RAG infrastructure with intelligent chunking, semantic search, and multi-modal support.
+                        </p>
+                        <a href="#" class="system-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonial Section -->
+        <section class="testimonials-section" aria-label="Client testimonial">
+            <div class="testimonials-container">
+                <article class="testimonial-card">
+                    <blockquote class="testimonial-quote">
+                        "Techjays delivered a production AI system in 6 weeks that our internal team had been trying to build for 18 months. The difference was night and day."
+                    </blockquote>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SK</div>
+                        <div class="author-info">
+                            <div class="author-name">Sarah Kim</div>
+                            <div class="author-role">CTO, MedFlow Health Systems</div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section id="contact" class="cta-section" aria-label="Contact us">
+            <div class="cta-container">
+                <div class="cta-card">
+                    <h2 class="cta-title">Ready to ship?</h2>
+                    <p class="cta-description">
+                        Let's talk about your AI challenges. No sales pitch, just a technical conversation about what's possible.
+                    </p>
+                    <div class="cta-buttons">
+                        <a href="mailto:hello@techjays.com" class="btn btn-primary btn-large">
+                            <span>Start a Conversation</span>
+                            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </a>
+                        <a href="#" class="btn btn-ghost btn-large">
+                            <span>Schedule a Call</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="#" class="footer-logo">
+                        <div class="logo-mark"></div>
+                        <span>Techjays</span>
+                    </a>
+                    <p class="footer-tagline">
+                        AI systems that actually work. Built by engineers who ship.
+                    </p>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Careers</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="#">ML Systems</a></li>
+                            <li><a href="#">LLM Integration</a></li>
+                            <li><a href="#">Data Engineering</a></li>
+                            <li><a href="#">MLOps</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Case Studies</a></li>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="#">Open Source</a></li>
+                            <li><a href="#">Research</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2024 Techjays. All rights reserved.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="LinkedIn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </a>
+                    <a href="#" aria-label="Twitter">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                    </a>
+                    <a href="#" aria-label="GitHub">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // =====================================================
+        // INITIALIZE LENIS SMOOTH SCROLL
+        // =====================================================
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            smoothTouch: false,
+            touchMultiplier: 2,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Integrate Lenis with GSAP ScrollTrigger
+        lenis.on('scroll', ScrollTrigger.update);
+
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+
+        gsap.ticker.lagSmoothing(0);
+
+        // =====================================================
+        // REGISTER GSAP PLUGINS
+        // =====================================================
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // =====================================================
+        // CUSTOM CURSOR
+        // =====================================================
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Smooth cursor follow
+        gsap.ticker.add(() => {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+
+            gsap.set(cursor, { x: cursorX - 10, y: cursorY - 10 });
+            gsap.set(cursorDot, { x: mouseX - 3, y: mouseY - 3 });
+        });
+
+        // Cursor hover effects
+        const hoverElements = document.querySelectorAll('a, button, .work-card, .process-card, .capability-card, .system-card');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // =====================================================
+        // THEME TOGGLE
+        // =====================================================
+        const themeToggle = document.querySelector('.theme-toggle');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+
+        // Check for saved theme or system preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else if (!prefersDark.matches) {
+            setTheme('light');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+        // =====================================================
+        // NAVIGATION SCROLL EFFECT
+        // =====================================================
+        const nav = document.querySelector('.nav');
+
+        ScrollTrigger.create({
+            start: 'top -80',
+            end: 99999,
+            toggleClass: { className: 'scrolled', targets: nav }
+        });
+
+        // Active nav link highlighting
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-menu a');
+
+        sections.forEach(section => {
+            ScrollTrigger.create({
+                trigger: section,
+                start: 'top center',
+                end: 'bottom center',
+                onEnter: () => setActiveLink(section.id),
+                onEnterBack: () => setActiveLink(section.id)
+            });
+        });
+
+        function setActiveLink(id) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${id}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // =====================================================
+        // HERO ANIMATIONS
+        // =====================================================
+        const heroTl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+        // Animate background shapes
+        heroTl.to('.hero-shape', {
+            opacity: 1,
+            scale: 1,
+            duration: 2,
+            stagger: 0.2
+        }, 0);
+
+        // Animate hero lines
+        heroTl.to('.hero-line', {
+            opacity: 0.3,
+            duration: 1,
+            stagger: 0.1
+        }, 0.3);
+
+        // Hero line continuous animation
+        gsap.to('.hero-line', {
+            x: '200%',
+            duration: 8,
+            ease: 'none',
+            repeat: -1,
+            stagger: {
+                each: 1.5,
+                repeat: -1
+            }
+        });
+
+        // Badge animation
+        heroTl.to('.hero-badge', {
+            opacity: 1,
+            y: 0,
+            duration: 1
+        }, 0.5);
+
+        // Character reveal animation
+        heroTl.to('.hero-title .char', {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.02
+        }, 0.7);
+
+        // Subtitle and CTA
+        heroTl.to('.hero-subtitle', {
+            opacity: 1,
+            y: 0,
+            duration: 1
+        }, 1.2);
+
+        heroTl.to('.hero-cta', {
+            opacity: 1,
+            y: 0,
+            duration: 1
+        }, 1.4);
+
+        // Stats animation
+        heroTl.to('.hero-stats', {
+            opacity: 1,
+            duration: 1
+        }, 1.6);
+
+        // Scroll indicator
+        heroTl.to('.scroll-indicator', {
+            opacity: 1,
+            duration: 1
+        }, 2);
+
+        // =====================================================
+        // COUNT UP ANIMATION
+        // =====================================================
+        const statValues = document.querySelectorAll('.stat-value[data-count]');
+
+        statValues.forEach(stat => {
+            const target = parseInt(stat.getAttribute('data-count'));
+
+            ScrollTrigger.create({
+                trigger: stat,
+                start: 'top 80%',
+                onEnter: () => {
+                    gsap.to(stat, {
+                        innerText: target,
+                        duration: 2,
+                        ease: 'power2.out',
+                        snap: { innerText: 1 },
+                        onUpdate: function() {
+                            stat.innerText = Math.round(this.targets()[0].innerText);
+                        }
+                    });
+                },
+                once: true
+            });
+        });
+
+        // =====================================================
+        // PARALLAX BACKGROUND ORBS
+        // =====================================================
+        gsap.to('.gradient-orb-1', {
+            y: -150,
+            x: 50,
+            scrollTrigger: {
+                trigger: 'body',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 1
+            }
+        });
+
+        gsap.to('.gradient-orb-2', {
+            y: -200,
+            x: -80,
+            scrollTrigger: {
+                trigger: 'body',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 1.5
+            }
+        });
+
+        gsap.to('.gradient-orb-3', {
+            y: -100,
+            x: 100,
+            scrollTrigger: {
+                trigger: 'body',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 2
+            }
+        });
+
+        // =====================================================
+        // PROCESS CARDS STAGGER REVEAL
+        // =====================================================
+        gsap.utils.toArray('.process-card').forEach((card, i) => {
+            gsap.from(card, {
+                opacity: 0,
+                y: 60,
+                duration: 0.8,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                delay: i * 0.1
+            });
+        });
+
+        // =====================================================
+        // WORK CARDS REVEAL
+        // =====================================================
+        gsap.utils.toArray('.work-card').forEach((card, i) => {
+            gsap.to(card, {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: 'power4.out',
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                delay: i * 0.1
+            });
+        });
+
+        // =====================================================
+        // CAPABILITY CARDS STAGGER
+        // =====================================================
+        gsap.utils.toArray('.capability-card').forEach((card, i) => {
+            gsap.to(card, {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                delay: i * 0.08
+            });
+        });
+
+        // =====================================================
+        // SYSTEM CARDS REVEAL
+        // =====================================================
+        gsap.utils.toArray('.system-card').forEach((card, i) => {
+            gsap.to(card, {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: 'power4.out',
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                delay: i * 0.15
+            });
+        });
+
+        // =====================================================
+        // TESTIMONIAL REVEAL
+        // =====================================================
+        gsap.to('.testimonial-card', {
+            opacity: 1,
+            scale: 1,
+            duration: 1.2,
+            ease: 'power4.out',
+            scrollTrigger: {
+                trigger: '.testimonial-card',
+                start: 'top 80%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+
+        // =====================================================
+        // CTA REVEAL
+        // =====================================================
+        gsap.to('.cta-card', {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: 'power4.out',
+            scrollTrigger: {
+                trigger: '.cta-card',
+                start: 'top 80%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+
+        // =====================================================
+        // SMOOTH SCROLL FOR ANCHOR LINKS
+        // =====================================================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    lenis.scrollTo(target, {
+                        offset: -100,
+                        duration: 1.5
+                    });
+                }
+            });
+        });
+
+        // =====================================================
+        // HERO SHAPES PARALLAX ON MOUSE MOVE
+        // =====================================================
+        const heroShapes = document.querySelectorAll('.hero-shape');
+
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 2;
+            const y = (e.clientY / window.innerHeight - 0.5) * 2;
+
+            heroShapes.forEach((shape, i) => {
+                const speed = (i + 1) * 15;
+                gsap.to(shape, {
+                    x: x * speed,
+                    y: y * speed,
+                    duration: 1,
+                    ease: 'power2.out'
+                });
+            });
+        });
+
+        // =====================================================
+        // SECTION HEADERS REVEAL
+        // =====================================================
+        gsap.utils.toArray('.section-label, .section-title').forEach(el => {
+            gsap.from(el, {
+                opacity: 0,
+                y: 40,
+                duration: 1,
+                ease: 'power4.out',
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        });
+
+        // =====================================================
+        // REFRESH SCROLLTRIGGER ON RESIZE
+        // =====================================================
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 250);
+        });
+
+        // =====================================================
+        // REDUCED MOTION CHECK
+        // =====================================================
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            // Disable Lenis smooth scroll
+            lenis.destroy();
+
+            // Kill all GSAP animations
+            gsap.globalTimeline.clear();
+            ScrollTrigger.getAll().forEach(st => st.kill());
+
+            // Set all elements to their final states
+            gsap.set('.hero-badge, .hero-subtitle, .hero-cta, .hero-stats, .scroll-indicator, .hero-shape, .hero-line', {
+                opacity: 1,
+                y: 0,
+                x: 0,
+                scale: 1
+            });
+            gsap.set('.hero-title .char', { opacity: 1, y: 0 });
+            gsap.set('.work-card, .capability-card, .system-card, .testimonial-card, .cta-card', {
+                opacity: 1,
+                y: 0,
+                scale: 1
+            });
+        }
+    </script>
+</body>
+</html>
